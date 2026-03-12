@@ -2540,13 +2540,15 @@ function renderShopifyOrderCard(order, oi) {
       <span style="background:${statusColors[st]};color:#fff;border-radius:20px;padding:3px 12px;font-size:12px;font-weight:700">${statusLabels[st]||st}</span>
       ${st==='pending' ? `
         <button class="btn success" onclick="convertShopifyOrder(${oi})">→ Convert to Sale</button>
-        <div style="display:flex;align-items:center;gap:4px">
-          <select id="shopify-cat-${oi}" style="padding:6px 8px;border-radius:7px;border:1px solid var(--border);background:var(--panel2);color:var(--text);font-size:12px;font-weight:700">
-            <option value="">— Category —</option>
+        <button class="btn" style="background:var(--purple);color:#fff;white-space:nowrap" onclick="showShopifyCatPicker(${oi})">→ Pre-Order</button>
+        <div id="shopify-cat-wrap-${oi}" style="display:none;align-items:center;gap:4px;flex-wrap:wrap">
+          <select id="shopify-cat-${oi}" style="padding:6px 8px;border-radius:7px;border:1px solid var(--purple);background:var(--panel2);color:var(--text);font-size:12px;font-weight:700">
+            <option value="">— Pick category —</option>
             ${catOptions}
             <option value="__new__">+ New category…</option>
           </select>
-          <button class="btn" style="background:var(--purple);color:#fff;white-space:nowrap" onclick="convertShopifyToPreOrder(${oi})">→ Pre-Order</button>
+          <button class="btn" style="background:var(--purple);color:#fff;white-space:nowrap" onclick="convertShopifyToPreOrder(${oi})">✓ Confirm</button>
+          <button class="btn ghost" style="font-size:12px" onclick="document.getElementById('shopify-cat-wrap-${oi}').style.display='none'">✕</button>
         </div>
         <button class="btn ghost" onclick="shopifyOrders[${oi}]._status='skipped';render()" style="font-size:12px">Skip</button>
       ` : ''}
@@ -2708,6 +2710,11 @@ function convertShopifyOrder(oi) {
   saveDB();
   showToast(`✅ Order ${order.shopifyOrderNum||''} converted to sale!`);
   render();
+}
+
+function showShopifyCatPicker(oi) {
+  const wrap = document.getElementById(`shopify-cat-wrap-${oi}`);
+  if (wrap) wrap.style.display = 'flex';
 }
 
 function dismissShopifyOrder(oi) {
